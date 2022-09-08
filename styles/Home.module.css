@@ -108,6 +108,10 @@
   margin-left: 0.5rem;
 }
 
+.mainHeader {
+  color: #008e9b;
+}
+
 @media (max-width: 600px) {
   .grid {
     width: 100%;
@@ -115,7 +119,7 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   .card,
   .footer {
     border-color: #222;
@@ -126,4 +130,30 @@
   .logo img {
     filter: invert(1);
   }
+} */
+
+.costsAndSpeedometerContainer {
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.costsAndSpeedometerContainer > div {
+  margin: 1rem;
+  padding: 1rem;
+}
+
+.tipsContainer {
+  display: flex;
+}
+
+.costs {
+  width: 35%;
+}
+
+.speed {
+  display: flex;
+  width: 65%;
+  margin-left: 10rem !important;
 }
