@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import ReactSpeedometer from "react-d3-speedometer"
 import {percentageOfValue} from '../utils/math';
 import styles from '../styles/Home.module.css'
+import { useWobble } from "../hooks/useWobble";
 
 interface IProps{
     maxValue?:number;
@@ -9,6 +10,7 @@ interface IProps{
 }
 
 export function Speedmeter({maxValue = 500,value = 0}:IProps){
+    const apiValue = useWobble(value, 2500);
     const segementStops = useMemo(()=>{
         const segements = [0];
         const firstStop = percentageOfValue(maxValue, 42.5);
@@ -24,8 +26,8 @@ export function Speedmeter({maxValue = 500,value = 0}:IProps){
 
     return <div className={styles.speed}>
     <ReactSpeedometer 
-        maxValue={maxValue}
-        value={value}
+        maxValue={apiValue > maxValue ? apiValue + 100 : maxValue} 
+        value={apiValue}
         needleColor="black"
         segments={3}
         height={230}

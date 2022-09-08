@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 
 import Redis from 'ioredis';
 
-let client = new Redis("redis://:f7dc8051437441f1873dfa7439f76d8e@eu1-devoted-sunbeam-38011.upstash.io:38011");
+let client = new Redis("redis://:cbbfe526135445fb83482db6368e6e2b@eu1-devoted-sunbeam-38011.upstash.io:38011");
 
 export default async function handler(
   req: NextApiRequest,
@@ -24,6 +24,8 @@ export default async function handler(
   } else {
     client.set(tipUpvoteName, tipUpVoteParsed + 1);
   }
+
+  // await client.quit();
 
   res.status(200).json(tipUpVoteParsed ? tipUpVoteParsed + 1 : 1);
 }
