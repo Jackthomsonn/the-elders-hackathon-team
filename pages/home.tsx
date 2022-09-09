@@ -11,14 +11,14 @@ import { InferGetStaticPropsType } from 'next'
 import { useNotLogged } from '../hooks/useNotLogged';
 import { useAuth } from '../context/auth';
 
-const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({ dailyUsage, weeklyUsage , monthlyUsage, yearlyUsage, usage, tips, tipUpvotes }) => {
-  const {budget, usage:use} = usage;
+const Home: NextPage<any> = ({ dailyUsage, weeklyUsage , monthlyUsage, yearlyUsage, usage, tips, tipUpvotes }) => {
+  const {budget, usage:use} = usage as any;
   const {user} = useAuth()
-  console.log('Daily Usage',dailyUsage);
-  console.log('Weekly Usage',weeklyUsage);
-  console.log('Monthly Usage',monthlyUsage);
-  console.log('Yearly Usage',yearlyUsage);
-  console.log('upvotes',tipUpvotes);
+  console.log('Daily Usage',...dailyUsage);
+  console.log('Weekly Usage',...weeklyUsage);
+  console.log('Monthly Usage',...monthlyUsage);
+  console.log('Yearly Usage',...yearlyUsage);
+  console.log('upvotes',...tipUpvotes);
 
   // console.log(usage);
   // console.log(tips)
@@ -53,14 +53,14 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({ dailyU
 }
 const url = config.url;
 
-export async function getStaticProps(){
-  const usageRes = await fetch(url +'/api/usage');
-  const dailyUsageRes = await fetch(url + `/api/usage?timescale=${UsageTimescales.DAILY}`)
-  const weeklyUsageRes = await fetch(url + `/api/usage?timescale=${UsageTimescales.WEEKLY}`)
-  const monthlyUsageRes = await fetch(url + `/api/usage?timescale=${UsageTimescales.MONTHLY}`)
-  const yearlyUsageRes = await fetch(url + `/api/usage?timescale=${UsageTimescales.YEARLY}`)
-  const tipsRes = await fetch(url + '/api/tips');
-  const tipupVotesRes = await fetch(url + '/api/tipupvote');
+const fe = async () => {
+  const usageRes = await fetch('api/usage');
+  const dailyUsageRes = await fetch( `api/usage?timescale=${UsageTimescales.DAILY}`)
+  const weeklyUsageRes = await fetch( `api/usage?timescale=${UsageTimescales.WEEKLY}`)
+  const monthlyUsageRes = await fetch( `api/usage?timescale=${UsageTimescales.MONTHLY}`)
+  const yearlyUsageRes = await fetch( `api/usage?timescale=${UsageTimescales.YEARLY}`)
+  const tipsRes = await fetch( 'api/tips');
+  const tipupVotesRes = await fetch( 'api/tipupvote');
   const usage: Usage = await usageRes.json()
   const dailyUsage: Usage = await dailyUsageRes.json()
   const weeklyUsage: Usage = await weeklyUsageRes.json()
@@ -68,8 +68,8 @@ export async function getStaticProps(){
   const yearlyUsage: Usage = await yearlyUsageRes.json()
   const tips: Tip[] = await tipsRes.json()
   const tipUpvotes = await tipupVotesRes.json();
-  return {
-    props:{
+
+  return Promise.resolve({
       dailyUsage,
       weeklyUsage,
       monthlyUsage,
@@ -77,8 +77,37 @@ export async function getStaticProps(){
       usage,
       tips,
       tipUpvotes: tipUpvotes.tipUpvotes
+  });
+}
+export async function getStaticProps(){
+  try {
+    const {dailyUsage, weeklyUsage, monthlyUsage, yearlyUsage, usage, tips, tipUpvotes} = await fe();
+    return {
+      props:{
+        dailyUsage,
+        weeklyUsage,
+        monthlyUsage,
+        yearlyUsage,
+        usage,
+        tips,
+        tipUpvotes: tipUpvotes.tipUpvotes
+      }
+    }
+  }catch {
+    console.log("error");
+    return  {
+      props: {
+        dailyUsage: 0,
+        weeklyUsage: 0,
+        monthlyUsage: 0,
+        yearlyUsage: 0,
+        usage: 0,
+        tips: 0,
+        tipUpvotes: {}
+      } 
     }
   }
+
 }
 
 export default Home
